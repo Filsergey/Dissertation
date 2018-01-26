@@ -4,7 +4,7 @@
     <div class="gantt_container">
     <gantt-table :rows="Tasks"></gantt-table>
       <div class="gantt-diagramm">
-        <gantt-header-chart></gantt-header-chart>
+        <gantt-header-chart :header="CalcHeaderDate"></gantt-header-chart>
         <div class="gantt-diagramm-body">
           <!-- <h1>task data</h1> -->
         </div>
@@ -16,11 +16,22 @@
 
 
 <script>
-import { TransformInputData } from "./../functions" 
+import { TransformInputData,
+  CalcHeaderDays
+ } from "./../functions" 
 import GanttTab from "./GanttTab";
 import GanttTable from "./GanttTable";
 import GanttHeaderChart from "./GanttHeaderChart";
 import dataJsonRows from "./../data.json";
+
+const defaultOptions = {
+  cellWidth: 24,
+  scales: [
+    { scale: 'months' },
+    { scale: 'days' },
+  ]
+}
+
 
 export default {
   components: {
@@ -38,11 +49,21 @@ export default {
   computed: {
     ArrayRows() {
       const { rows } = this.dataJsonRows;
-      console.log(TransformInputData(rows))
+      // console.log(TransformInputData(rows))
       return TransformInputData(rows);
     },
     Tasks() {
       return this.ArrayRows.tasks
+    },
+    StartChartDate() {
+      return this.ArrayRows.startChartDate
+    },
+    EndChartDate() {
+      return this.ArrayRows.endChartDate
+    },
+
+    CalcHeaderDate() { 
+      return CalcHeaderDays(this.StartChartDate, this.EndChartDate, 'months', defaultOptions.cellWidth)
     }
   },
   method: { }
@@ -56,7 +77,7 @@ export default {
   display: flex;
   flex-direction: row;
   border-top: solid 1px #80808030;
-  overflow-x: scroll;
+  /* overflow-x: scroll; */
 }
 
 .gantt-thead > .row > .cell > h3 {
@@ -96,5 +117,9 @@ export default {
 .number,
 .duration {
   flex-shrink: 4;
+}
+
+.gantt-diagramm {
+  overflow-x: scroll;
 }
 </style>
